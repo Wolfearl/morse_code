@@ -96,7 +96,7 @@ values_code = list(morse_code.keys())
 def get_translate():
     txt = enter_morse.get(1.0, END).rstrip().split()
     output_text.delete(1.0, END)
-    output_text.insert(END, "".join([morse_code[letter] if letter in morse_code.keys() else "-" for letter in txt ]))
+    output_text.insert(END, "".join([morse_code[letter] if letter in morse_code.keys() else " " for letter in txt ]))
     enter_morse.focus_set()
 
 
@@ -110,7 +110,7 @@ def on_key_press(event):
             if 0.4 < d <= 1:
                 enter_morse.insert(END, " ")
             elif d > 1:
-                enter_morse.insert(END, " / ")
+                enter_morse.insert(END, " | ")
         new_word = None
     if event.keysym == 'BackSpace':
         return "continue"
@@ -309,11 +309,13 @@ def select():
         check_close = False
         window = Toplevel(root)
         window.title("Справочник")
-        window.geometry("400x400")
+        window.geometry("420x400")
+        window.configure(bg='#E4F7F4')
         window.resizable(False, False)
 
         count_row = 6
-        count_column = len(keys_alpha) // count_row
+        len_keys_alpha = len(keys_alpha)
+        count_column = len_keys_alpha // count_row + 1
         for c in range(count_column):
             window.columnconfigure(index=c, weight=1)
         for r in range(count_row):
@@ -321,9 +323,12 @@ def select():
         count_alpha = 0
         for i in range(count_row):
             for j in range(count_column):
-                ttk.Label(window, text=f'  {keys_alpha[count_alpha]}: {values_code[count_alpha]}  ', background="#E4F7F4", foreground='#001915',
-                          font=("Book Antiqua", 14, 'bold')).grid(row=i, column=j, sticky='nsew')
-                count_alpha += 1
+                if count_alpha < len_keys_alpha:
+                    ttk.Label(window, text=f'  {keys_alpha[count_alpha]}: {values_code[count_alpha]}  ', background="#E4F7F4", foreground='#001915',
+                              font=("Book Antiqua", 12, 'bold')).grid(row=i, column=j, sticky='nsew')
+                    count_alpha += 1
+                else:
+                    break
         window.protocol("WM_DELETE_WINDOW", on_window_close)
 
     enter_letter.focus()
